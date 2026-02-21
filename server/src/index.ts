@@ -20,7 +20,13 @@ import path from "path";
 import passport from "passport";
 import "./config/passport";
 
-console.log("SERVER START FILE LOADED");
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED PROMISE:", err);
+});
 
 /* CONFIGURATIONS */
 dotenv.config();
@@ -32,9 +38,15 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     credentials: true,
   })
 );
@@ -65,10 +77,6 @@ app.use("/auth", oauthRoutes);
 console.log("About to start server...");
 const port = Number(process.env.PORT) || 8000;
 
-try {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-} catch (err) {
-  console.error("SERVER CRASHED:", err);
-}
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on port ${port}`);
+});
