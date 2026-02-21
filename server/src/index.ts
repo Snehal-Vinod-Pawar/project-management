@@ -75,8 +75,8 @@ app.use("/auth", oauthRoutes);
 
 /* SERVER */
 console.log("About to start server...");
-const port = Number(process.env.PORT) || 8000;
+const PORT = process.env.PORT || 8000;
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+  console.log("SERVER RUNNING ON PORT " + PORT);
 });
