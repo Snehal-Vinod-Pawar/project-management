@@ -58,13 +58,12 @@
     "target": "ES2019",
     "module": "commonjs",
     "rootDir": ".",
-    "outDir": "../dist",
+    "outDir": "dist",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
     "strict": false,
     "skipLibCheck": true,
-    "types": ["node"],
-    "jsx": "react"
+    "resolveJsonModule": true,
+    "types": ["node"]
   },
   "include": ["src", "prisma.config.ts"]
 }
