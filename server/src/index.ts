@@ -20,6 +20,8 @@ import path from "path";
 import passport from "passport";
 import "./config/passport";
 
+console.log("SERVER START FILE LOADED");
+
 /* CONFIGURATIONS */
 dotenv.config();
 const app = express();
@@ -60,7 +62,13 @@ app.use("/auth", authRoutes);
 app.use("/auth", oauthRoutes);
 
 /* SERVER */
+console.log("About to start server...");
 const port = Number(process.env.PORT) || 8000;
-app.listen(port, () => {
-  console.log(`Server running on part ${port}`);
-});
+
+try {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+} catch (err) {
+  console.error("SERVER CRASHED:", err);
+}
