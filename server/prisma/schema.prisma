@@ -17,36 +17,79 @@ datasource db {
 
 model User {
   userId            Int     @id @default(autoincrement())
-  cognitoId         String  @unique
-  username          String  @unique
+  username          String? @unique
+  email             String? @unique
+  password          String?
   profilePictureUrl String?
-  teamId            Int?
 
+  workspaceId Int?
+  workspace   Workspace? @relation("WorkspaceMembers", fields: [workspaceId], references: [id])
+
+  ownedWorkspaces Workspace[] @relation("WorkspaceOwner")
+
+  // Ownership
+  ownedProjects Project[]
+  ownedTasks    Task[]    @relation("TaskOwner")
+  ownedTeams    Team[]    @relation("TeamOwner")
+
+  // Membership
+  teamId Int?
+  team   Team? @relation("UserTeam", fields: [teamId], references: [id])
+
+  projectMemberships ProjectMember[]
+
+  // Task relations
   authoredTasks   Task[]           @relation("TaskAuthor")
   assignedTasks   Task[]           @relation("TaskAssignee")
   taskAssignments TaskAssignment[]
   attachments     Attachment[]
   comments        Comment[]
-  team            Team?            @relation(fields: [teamId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  CONTRIBUTOR
+  VIEWER
 }
 
 model Team {
-  id                   Int           @id @default(autoincrement())
-  teamName             String
-  productOwnerUserId   Int?
-  projectManagerUserId Int?
-  projectTeams         ProjectTeam[]
-  user                 User[]
+  id       Int    @id @default(autoincrement())
+  teamName String
+
+  ownerId Int?
+  owner   User? @relation("TeamOwner", fields: [ownerId], references: [userId])
+
+  // Members
+  members User[] @relation("UserTeam")
+
+  projectTeams ProjectTeam[]
+  invites      Invite[]
+
+  workspaceId Int?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
 }
 
 model Project {
-  id           Int           @id @default(autoincrement())
-  name         String
-  description  String?
-  startDate    DateTime?
-  endDate      DateTime?
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+
+  ownerId Int?
+  owner   User? @relation(fields: [ownerId], references: [userId])
+
   tasks        Task[]
   projectTeams ProjectTeam[]
+
+  status    String          @default("Active")
+  createdAt DateTime        @default(now())
+  members   ProjectMember[]
+  invites   Invite[]
+
+  workspaceId Int?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
 }
 
 model ProjectTeam {
@@ -55,28 +98,37 @@ model ProjectTeam {
   projectId Int
   team      Team    @relation(fields: [teamId], references: [id])
   project   Project @relation(fields: [projectId], references: [id])
+  @@unique([projectId, teamId])
 }
 
 model Task {
-  id             Int       @id @default(autoincrement())
-  title          String
-  description    String?
-  status         String?
-  priority       String?
-  tags           String?
-  startDate      DateTime?
-  dueDate        DateTime?
-  points         Int?
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  status      String?
+  priority    String?
+  tags        String?
+  startDate   DateTime?
+  dueDate     DateTime?
+  points      Int?
+
   projectId      Int
   authorUserId   Int
   assignedUserId Int?
+  ownerId        Int?
 
+  owner           User?            @relation("TaskOwner", fields: [ownerId], references: [userId])
   project         Project          @relation(fields: [projectId], references: [id])
-  author          User             @relation("TaskAuthor", fields: [authorUserId], references: [userId])
+  author          User?            @relation("TaskAuthor", fields: [authorUserId], references: [userId])
   assignee        User?            @relation("TaskAssignee", fields: [assignedUserId], references: [userId])
   taskAssignments TaskAssignment[]
   attachments     Attachment[]
   comments        Comment[]
+
+  createdAt DateTime @default(now())
+
+  workspaceId Int?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
 }
 
 model TaskAssignment {
@@ -89,7 +141,7 @@ model TaskAssignment {
 }
 
 model Attachment {
-  id           Int     @id @default(autoincrement())
+  id           String  @id @default(uuid())
   fileURL      String
   fileName     String?
   taskId       Int
@@ -107,4 +159,50 @@ model Comment {
 
   task Task @relation(fields: [taskId], references: [id])
   user User @relation(fields: [userId], references: [userId])
+}
+
+model Workspace {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  ownerId Int
+  owner   User @relation("WorkspaceOwner", fields: [ownerId], references: [userId])
+
+  members User[] @relation("WorkspaceMembers")
+
+  teams    Team[]
+  projects Project[]
+  tasks    Task[]
+
+  createdAt DateTime @default(now())
+}
+
+model ProjectMember {
+  id        Int    @id @default(autoincrement())
+  projectId Int
+  userId    Int
+  role      String @default("Member") // Owner, Member (future: Admin)
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [userId])
+
+  @@unique([projectId, userId])
+}
+
+model Invite {
+  id    String @id @default(uuid())
+  email String
+
+  projectId Int?
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  teamId Int?
+  team   Team? @relation(fields: [teamId], references: [id])
+
+  role      String   @default("Member")
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
 }

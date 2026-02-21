@@ -1,3 +1,5 @@
+"use client"
+
 import Modal from "@/components/Modal";
 import { Priority, Status, useCreateTaskMutation } from "@/state/api";
 import React, { useState } from "react";
@@ -9,7 +11,7 @@ type Props = {
   id?: string | null;
 };
 
-const ModalNewTask = ({ isOpen, onClose, id=null }: Props) => {
+const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
   const [createTask, { isLoading }] = useCreateTaskMutation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,9 +23,10 @@ const ModalNewTask = ({ isOpen, onClose, id=null }: Props) => {
   const [authorUserId, setAuthorUserId] = useState("");
   const [assignedUserId, setAssignedUserId] = useState("");
   const [projectId, setProjectId] = useState("");
-
+  const [image, setImage] = useState<File | null>(null);
+  
   const handleSubmit = async () => {
-    if (!title || !authorUserId || !(id !== null || projectId)) return;
+    if (!isFormValid()) return;
 
     const formattedStartDate = formatISO(new Date(startDate), {
       representation: "complete",
@@ -32,22 +35,42 @@ const ModalNewTask = ({ isOpen, onClose, id=null }: Props) => {
       representation: "complete",
     });
 
-    await createTask({
-      title,
-      description,
-      status,
-      priority,
-      tags,
-      startDate: formattedStartDate,
-      dueDate: formattedDueDate,
-      authorUserId: parseInt(authorUserId),
-      assignedUserId: parseInt(assignedUserId),
-      projectId: id !== null ? Number(id) : Number(projectId),
-    });
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("status", status);
+    formData.append("priority", priority);
+    formData.append("tags", tags);
+    formData.append("startDate", formattedStartDate);
+    formData.append("dueDate", formattedDueDate);
+    formData.append("assignedUserId", assignedUserId);
+    formData.append("projectId", id !== null ? id : projectId);
+
+    if (image) {
+      formData.append("image", image);
+    }
+
+    try {
+      await createTask(formData).unwrap();
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      console.error("Task creation failed", err);
+    }
   };
 
+
   const isFormValid = () => {
-    return title && authorUserId && !(id !== null || projectId);
+    return Boolean(
+      title.trim() &&
+      description.trim() &&
+      status &&
+      priority &&
+      startDate &&
+      dueDate &&
+      assignedUserId &&
+      (id !== null || projectId)
+    );
   };
 
   const inputStyles =
@@ -82,9 +105,7 @@ const ModalNewTask = ({ isOpen, onClose, id=null }: Props) => {
           <select
             className={selectStyles}
             value={status}
-            onChange={(e) =>
-              setStatus(Status[e.target.value as keyof typeof Status])
-            }
+            onChange={(e) => setStatus(e.target.value as Status)}
           >
             <option value="">Select Status</option>
             <option value={Status.ToDo}>To Do</option>
@@ -95,9 +116,7 @@ const ModalNewTask = ({ isOpen, onClose, id=null }: Props) => {
           <select
             className={selectStyles}
             value={priority}
-            onChange={(e) =>
-              setPriority(Priority[e.target.value as keyof typeof Priority])
-            }
+            onChange={(e) => setPriority(e.target.value as Priority)}
           >
             <option value="">Select Priority</option>
             <option value={Priority.Urgent}>Urgent</option>
@@ -152,6 +171,12 @@ const ModalNewTask = ({ isOpen, onClose, id=null }: Props) => {
             onChange={(e) => setProjectId(e.target.value)}
           />
         )}
+        <input
+          type="file"
+          accept="image/*"
+          className={inputStyles}
+          onChange={(e) => setImage(e.target.files?.[0] || null)}
+        />
         <button
           type="submit"
           className={`focus-offset-2 mt-4 flex w-full justify-center rounded-md border border-transparent bg-blue-primary px-4 py-2 text-base font-medium text-white bg-blue-600 shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600 ${!isFormValid() || isLoading ? "cursor-not-allowed opacity-50" : ""

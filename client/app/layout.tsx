@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DashboardWrapper from "./dashboardWrapper";
+import { AuthProvider } from "../context/AuthContext";
+import ProtectedRoute from "../components/ProtectedRoute";
+import { Store } from "lucide-react";
+import StoreProvider from "./redux";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,9 +31,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >  
-        <DashboardWrapper>{children}</DashboardWrapper>
+        <StoreProvider>
+          <AuthProvider>
+            {/* <DashboardWrapper> */}
+              {children}
+            {/* </DashboardWrapper> */}
+          </AuthProvider>
+        </StoreProvider>
       </body>
     </html>
   );

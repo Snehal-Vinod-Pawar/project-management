@@ -1,30 +1,50 @@
-import React, { useState } from 'react'
-import { Menu, Moon, Search, Settings, Sun, User } from "lucide-react";
+import React, { useEffect, useState } from 'react'
+import { Menu, Moon, Search, Settings, Sun, User, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from "../app/redux";
 import { setIsDarkMode, setIsSidebarCollapsed } from "@/state";
-// import { useGetAuthUserQuery } from "@/state/api";
-// import { signOut } from "aws-amplify/auth";
-// import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
+
 
 
 const Navbar = () => {
-  // const [showProjects, setShowProjects] = useState(true);
-  // const [showPriority, setShowPriority] = useState(true);
-
-  // const { data: projects } = useGetProjectsQuery();
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector(
     (state) => state.global.isSidebarCollapsed,
   );
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
-    console.log("isDarkMode:", isDarkMode);
+  console.log("isDarkMode:", isDarkMode);
+
+  // const { user, logout } = useAuth();
+
+  const router = useRouter();
+
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+      credentials: "include",
+    })
+      .then(res => res.json())
+      .then(data => setUser(data));
+  }, []);
+
+
+  const handleLogout = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    router.push("/auth/login");
+  };
+
 
   return (
-    <div className="flex items-center justify-between bg-white px-4 py-3 dark:bg-dark-bg">
+    <div className="flex items-center justify-between bg-white px-4 py-3  dark:bg-dark-b dark:border-gray-700">
       {/* Search Bar */}
-      <div className="flex items-center gap-8">
+      <div className="flex items-center gap-8 ">
         {!isSidebarCollapsed ? null : (
           <button
             onClick={() => dispatch(setIsSidebarCollapsed(!isSidebarCollapsed))}
@@ -32,7 +52,7 @@ const Navbar = () => {
             <Menu className="h-8 w-8 dark:text-black" />
           </button>
         )}
-        <div className="relative flex h-min w-[200px]">
+        <div className="relative flex h-min w-[200px]" >
           <Search className="absolute left-[4px] top-1/2 mr-2 h-5 w-5 -translate-y-1/2 transform cursor-pointer dark:text-black" />
           <input
             className="w-full rounded border-none bg-gray-100 p-2 pl-8 placeholder-gray-00 focus:border-transparent focus:outline-none dark:bg-gray-100 dark:text-black dark:placeholder-gray-700"
@@ -69,9 +89,23 @@ const Navbar = () => {
           <Settings className="h-6 w-6 cursor-pointer dark:text-black" />
         </Link>
         <div className="ml-2 mr-5 hidden min-h-[2em] w-[0.1rem] bg-gray-200 md:inline-block"></div>
+        <div className="flex items-center gap-4 text-black">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <User className="w-5 h-5" />
+            <span>{user?.username}</span>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+          >
+            Sign out
+          </button>
+        </div>
+
       </div>
     </div>
-    
+
   )
 }
 

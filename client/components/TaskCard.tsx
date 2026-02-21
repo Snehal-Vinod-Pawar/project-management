@@ -1,7 +1,9 @@
 import { Task } from "@/state/api";
 import { format } from "date-fns";
-import Image from "next/image";
-import React from "react";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useDeleteTaskMutation } from "@/state/api";
 
 type Props = {
   task: Task;
@@ -38,53 +40,85 @@ const priorityColors: Record<string, string> = {
 };
 
 const TaskCard = ({ task }: Props) => {
+  const [confirm, setConfirm] = useState(false);
+  const router = useRouter();
+  const [deleteTask] = useDeleteTaskMutation();
+
   return (
     <div
-      className={`mb-4 rounded-lg border border-gray-200 
+      className={`mb-3 w-full max-w-4xl rounded-lg border border-gray-200
       ${statusBg[task.status ?? ""] || "bg-white"}
       transition hover:shadow-sm hover:border-gray-300`}
     >
       <div className="px-5 py-4 text-sm text-gray-700">
         {/* ATTACHMENT */}
-        {task.attachments && task.attachments.length > 0 && (
+        {task.attachments?.[0]?.fileURL && (
           <div className="mb-4 overflow-hidden rounded-md">
-            <Image
-              src={`/${task.attachments[0].fileURL}`}
-              alt={task.attachments[0].fileName}
+            {/* <img
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${task.attachments[0].fileURL}`}
+              alt={task.attachments[0].fileName || "task image"}
               width={400}
               height={200}
-              className="rounded-md"
+              className="rounded-md object-cover"
+            /> */}
+            <img
+              src={
+                task.attachments[0].fileURL.startsWith("/uploads")
+                  ? `http://localhost:8000${task.attachments[0].fileURL}` // backend upload
+                  : `/${task.attachments[0].fileURL}`                     // client/public
+              }
+              alt="task"
+              className="rounded-md object-cover max-h-52"
             />
             <strong>Attachments:</strong>
           </div>
         )}
 
         {/* HEADER */}
-        <div className="mb-2 flex items-center justify-between">
+        {/* <div className="mb-2 flex items-center justify-between">
           <p className="text-xs text-gray-500">ID: {task.id}</p>
 
           {task.priority && (
             <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                priorityColors[task.priority]
-              }`}
+              className={`rounded-full px-2 py-0.5 text-xs font-medium ${priorityColors[task.priority]
+                }`}
             >
               {task.priority}
             </span>
           )}
+        </div> */}
+        {/* HEADER */}
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-xs text-gray-500">ID: {task.id}</p>
+
+          <div className="flex items-center gap-2">
+            {task.priority && (
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium ${priorityColors[task.priority]}`}
+              >
+                {task.priority}
+              </span>
+            )}
+
+            <button
+              onClick={() => setConfirm(true)}
+              className="text-gray-400 hover:text-red-500 transition"
+              title="Delete Task"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
         </div>
 
         {/* TITLE + STATUS INDICATOR */}
         <div className="mb-1 flex items-center gap-2">
           <span
-            className={`h-2 w-2 rounded-full ${
-              statusDot[task.status ?? ""] || "bg-gray-400"
-            }`}
+            className={`h-2 w-2 rounded-full ${statusDot[task.status ?? ""] || "bg-gray-400"
+              }`}
           />
           <p
-            className={`text-base font-semibold ${
-              statusText[task.status ?? ""] || "text-gray-900"
-            }`}
+            className={`text-base font-semibold ${statusText[task.status ?? ""] || "text-gray-900"
+              }`}
           >
             {task.title}
           </p>
@@ -126,6 +160,42 @@ const TaskCard = ({ task }: Props) => {
             {task.assignee ? task.assignee.username : "Unassigned"}
           </p>
         </div>
+
+        {confirm && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 w-96 shadow-xl">
+              <h3 className="text-lg font-semibold">Delete Task?</h3>
+              <p className="text-gray-500 mt-1">
+                This action cannot be undone.
+              </p>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => setConfirm(false)}
+                  className="px-4 py-2 border rounded"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      await deleteTask(task.id).unwrap();
+                      setConfirm(false);
+                      router.refresh();
+                    } catch (err) {
+                      alert("Failed to delete task");
+                    }
+                  }}
+                  className="px-4 py-2 bg-red-600 text-white rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

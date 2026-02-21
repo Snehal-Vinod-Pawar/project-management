@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist && npx tsc",
-    "start" : "npm run build && node dist/index.js",
+    "start": "npm run build && node dist/index.js",
     "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
     "seed": "ts-node prisma/seed.ts"
   },
@@ -14,25 +14,43 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^25.0.3",
+    "@types/nodemailer": "^7.0.9",
     "concurrently": "^9.2.1",
     "dotenv": "^17.2.3",
     "nodemon": "^3.1.11",
+    "prisma": "^6.19.2",
     "rimraf": "^6.1.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.1",
+    "@prisma/client": "^6.19.2",
+    "@types/passport-github2": "^1.2.9",
+    "@types/passport-google-oauth20": "^2.0.17",
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.1",
+    "cloudinary": "^2.9.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
-    "prisma": "^6.19.1"
+    "multer": "^2.0.2",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.13",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
