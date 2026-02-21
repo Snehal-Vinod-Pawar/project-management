@@ -58,7 +58,7 @@
     "target": "ES2019",
     "module": "commonjs",
     "rootDir": ".",
-    "outDir": "dist",
+    "outDir": "../dist",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strict": false,

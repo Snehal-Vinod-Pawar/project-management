@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const projectController_1 = require("../controllers/projectController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const router = (0, express_1.Router)();
+router.get("/", authMiddleware_1.protect, projectController_1.getProjects);
+router.post("/", authMiddleware_1.protect, projectController_1.createProject);
+router.post("/:projectId/invite", authMiddleware_1.protect, projectController_1.inviteUserToProject);
+router.delete("/:projectId", authMiddleware_1.protect, projectController_1.deleteProject);
+router.patch("/:projectId", authMiddleware_1.protect, projectController_1.renameProject);
+router.post("/assign-team", authMiddleware_1.protect, projectController_1.assignProjectToTeam);
+exports.default = router;
