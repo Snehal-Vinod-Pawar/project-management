@@ -42,7 +42,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://project-management-nu3t.vercel.app"
+    ],
     credentials: true,
   })
 );
