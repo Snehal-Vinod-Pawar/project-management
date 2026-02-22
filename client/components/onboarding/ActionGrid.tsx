@@ -68,7 +68,7 @@ export default function ActionGrid() {
         <InviteMemberModal
           isOpen={openInvite}
           onClose={() => setOpenInvite(false)}
-          projectId={firstProjectId}
+          teamId={firstProjectId}
         />
       )}
 
