@@ -8,5 +8,6 @@ export const setAuthCookie = (res: Response, token: string) => {
     sameSite: "none", 
     path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    domain: ".onrender.com",
   });
 };
