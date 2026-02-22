@@ -11,6 +11,9 @@
     "postinstall": "prisma generate",
     "render-build": "npm install && npm run build"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

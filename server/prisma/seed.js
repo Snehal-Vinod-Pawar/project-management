@@ -83,7 +83,8 @@ async function main() {
             password: u.password ?? null,
             profilePictureUrl: u.profilePictureUrl ?? null,
             teamId: u.teamId
-        }))
+        })),
+        skipDuplicates: true
     });
     console.log("3. Projects");
     await prisma.project.createMany({
@@ -93,10 +94,11 @@ async function main() {
             startDate: new Date(p.startDate),
             endDate: new Date(p.endDate),
             ownerId: p.ownerId ?? null
-        }))
+        })),
+        skipDuplicates: true
     });
     console.log("4. ProjectTeams");
-    await prisma.projectTeam.createMany({ data: projectTeams });
+    await prisma.projectTeam.createMany({ data: projectTeams ,skipDuplicates: true});
     console.log("5. Tasks");
     await prisma.task.createMany({
         data: tasks.map((t) => ({
@@ -110,15 +112,33 @@ async function main() {
             projectId: t.projectId,
             authorUserId: t.authorUserId,
             assignedUserId: t.assignedUserId
-        }))
+        })),
+        skipDuplicates: true
     });
     console.log("6. TaskAssignments");
-    await prisma.taskAssignment.createMany({ data: taskAssignments });
+    await prisma.taskAssignment.createMany({ data: taskAssignments, skipDuplicates: true });
     console.log("7. Attachments");
-    await prisma.attachment.createMany({ data: attachments });
+    // await prisma.attachment.createMany({ data: attachments ,skipDuplicates: true});
+    await prisma.attachment.createMany({
+        data: attachments.map((a) => ({
+            fileURL: a.fileURL,
+            fileName: a.fileName,
+            taskId: a.taskId,
+            uploadedById: a.uploadedById
+        })),
+        skipDuplicates: true
+    });
+    // await prisma.comment.createMany({ data: comments, skipDuplicates: true });
+    await prisma.comment.createMany({
+        data: comments.map((c) => ({
+            text: c.text,
+            taskId: c.taskId,
+            userId: c.userId
+        })),
+        skipDuplicates: true
+    });
     console.log("8. Comments");
-    await prisma.comment.createMany({ data: comments });
-    console.log("🔥 FULL DATABASE RESTORED");
+    console.log("FULL DATABASE RESTORED");
 }
 main()
     .catch(console.error)

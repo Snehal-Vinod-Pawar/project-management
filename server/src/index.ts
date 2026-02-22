@@ -38,20 +38,14 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//   })
-// );
 app.use(
   cors({
-    origin: true,
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
+
 app.use(passport.initialize());
-// app.use("/uploads", express.static("public/uploads"));
 app.use("/api", inviteRoutes);
 
 app.use(
