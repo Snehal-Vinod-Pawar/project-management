@@ -171,8 +171,10 @@ export const oauthSuccess = (req: Request, res: Response) => {
     const token = createToken(user.userId);
     setAuthCookie(res, token);
 
-    return res.redirect("http://localhost:3000/");
+    // return res.redirect("http://localhost:3000/");
+    return res.redirect("https://project-management-nu3t.vercel.app/onboarding");
   } catch (error) {
-    return res.redirect("http://localhost:3000/login?error=oauth_failed");
+    // return res.redirect("http://localhost:3000/login?error=oauth_failed");
+    return res.redirect("https://project-management-nu3t.vercel.app/auth/login?error=oauth_failed");
   }
 };
