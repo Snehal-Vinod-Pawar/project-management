@@ -39,7 +39,7 @@ app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.set("trust proxy", 1);
+app.set("trust proxy", true);
 app.use(
   cors({
     origin: [
