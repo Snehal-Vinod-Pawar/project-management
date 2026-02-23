@@ -44,7 +44,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://project-management-nu3t.vercel.app"
+      "https://project-management-nu3t.vercel.app",
+      "https://project-management-nu3t-git-master-snehal-vinod-pawars-projects.vercel.app"
     ],
     credentials: true,
   })
