@@ -39,14 +39,33 @@ app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.set("trust proxy", true);
+// app.set("trust proxy", true);
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:3000",
+//       "https://project-management-nu3t.vercel.app",
+//       "https://project-management-nu3t-git-master-snehal-vinod-pawars-projects.vercel.app"
+//     ],
+//     credentials: true,
+//   })
+// );
+app.set("trust proxy", 1);
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://project-management-nu3t.vercel.app",
-      "https://project-management-nu3t-git-master-snehal-vinod-pawars-projects.vercel.app"
-    ],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (
+        origin.includes("localhost") ||
+        origin.includes("vercel.app")
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
