@@ -6,13 +6,13 @@ const prisma = new PrismaClient();
 
 export const getProjects = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any).userId;// from auth middleware
+    const userId = (req.user as any).userId;
 
     const projects = await prisma.project.findMany({
       where: {
         OR: [
           { ownerId: userId },
-          { members: { some: { userId } } },     // ProjectMember
+          { members: { some: { userId } } },     
           { projectTeams: { some: { team: { members: { some: { userId } } } } } } // Team
         ]
       },
@@ -22,7 +22,7 @@ export const getProjects = async (req: Request, res: Response) => {
       }
     });
 
-    res.json(projects); // ✅ OUTSIDE prisma call
+    res.json(projects); 
   } catch (error: any) {
     res.status(500).json({ message: `Error retrieving projects: ${error.message}` });
   }
