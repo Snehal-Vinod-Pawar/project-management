@@ -2,31 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { sendEmail } from "../services/emailService";
 
-// export const getTasks = async (req: Request, res: Response): Promise<void> => {
-//   const { projectId, priority } = req.query;
-//   const user = (req as any).user;
 
-//   try {
-//     const where: any = {};
-
-//     if (projectId) where.projectId = Number(projectId);
-//     if (priority) where.priority = priority;
-
-//     const tasks = await prisma.task.findMany({
-//       where,
-//       include: {
-//         author: true,
-//         assignee: true,
-//         comments: true,
-//         attachments: true,
-//       },
-//     });
-
-//     res.json(tasks);
-//   } catch (error: any) {
-//     res.status(500).json({ message: `Error retrieving tasks: ${error.message}` });
-//   }
-// };
 export const getTasks = async (req: Request, res: Response) => {
   const { projectId, priority } = req.query;
 
@@ -61,7 +37,6 @@ export const getTasks = async (req: Request, res: Response) => {
 
 
 export const getTasksByPriority = async (req: Request, res: Response) => {
-  // const priority = req.params.priority;   // /tasks/priority/Medium
   const user = (req as any).user;
   const priority =
     typeof req.query.priority === "string"
@@ -99,26 +74,26 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
     res.json(normalizedTasks)
 
 
-  if (!priority) {
-    return res.status(400).json({ message: "Priority is required" });
-  }
+  // if (!priority) {
+  //   return res.status(400).json({ message: "Priority is required" });
+  // }
 
-  try {
-    const tasks = await prisma.task.findMany({
-      where: {
-        priority,                    // string, safe
-        workspaceId: user.workspaceId, // 🔒 only same workspace
-      },
-      include: {
-        author: true,
-        assignee: true,
-      },
-    });
+  // try {
+  //   const tasks = await prisma.task.findMany({
+  //     where: {
+  //       priority,                    // string, safe
+  //       workspaceId: user.workspaceId, // 🔒 only same workspace
+  //     },
+  //     include: {
+  //       author: true,
+  //       assignee: true,
+  //     },
+  //   });
 
-    res.json(tasks);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
+  //   res.json(tasks);
+  // } catch (error: any) {
+  //   res.status(500).json({ message: error.message });
+  // }
 };
 
 export const createTask = async (req: Request, res: Response): Promise<void> => {
@@ -167,7 +142,8 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     // Save image
     if ((req as any).file) {
       const file = (req as any).file;
-      const imageUrl = `/uploads/tasks/${file.filename}`;
+      // const imageUrl = `/uploads/tasks/${file.filename}`;
+      const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
 
       await prisma.attachment.create({
         data: {
