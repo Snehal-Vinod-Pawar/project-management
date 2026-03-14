@@ -142,8 +142,8 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     // Save image
     if ((req as any).file) {
       const file = (req as any).file;
-      // const imageUrl = `/uploads/tasks/${file.filename}`;
-      const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
+      const imageUrl = `/uploads/tasks/${file.filename}`;
+      // const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
 
       await prisma.attachment.create({
         data: {
