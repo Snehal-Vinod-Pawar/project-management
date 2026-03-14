@@ -59,19 +59,19 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
     },
   });
   // ✅ NORMALIZE ATTACHMENT URLs
-    const normalizedTasks = tasks.map(task => ({
-      ...task,
-      attachments: task.attachments.map(att => ({
-        ...att,
-        fileURL: att.fileURL
-          ? att.fileURL.startsWith("/")
-            ? att.fileURL
-            : `/uploads/tasks/${att.fileURL}`
-          : null,
-      })),
-    }));
+  const normalizedTasks = tasks.map(task => ({
+    ...task,
+    attachments: task.attachments.map(att => ({
+      ...att,
+      fileURL: att.fileURL
+        ? att.fileURL.startsWith("/")
+          ? att.fileURL
+          : `/uploads/tasks/${att.fileURL}`
+        : null,
+    })),
+  }));
 
-    res.json(normalizedTasks)
+  res.json(normalizedTasks)
 
 
   // if (!priority) {
@@ -140,20 +140,26 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     });
 
     // Save image
-    if ((req as any).file) {
-      const file = (req as any).file;
-      const imageUrl = `/uploads/tasks/${file.filename}`;
-      // const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
+    try {
+      if ((req as any).file) {
+        const file = (req as any).file;
 
-      await prisma.attachment.create({
-        data: {
-          fileURL: imageUrl,
-          fileName: file.originalname,
-          taskId: newTask.id,
-          uploadedById: user.userId,
-        },
-      });
+        const imageUrl = `/uploads/tasks/${file.filename}`;
+        // const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
+
+        await prisma.attachment.create({
+          data: {
+            fileURL: imageUrl,
+            fileName: file.originalname,
+            taskId: newTask.id,
+            uploadedById: user.userId,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("ATTACHMENT ERROR:", error);
     }
+
 
     // 🔥 Fetch task again WITH attachments
     const taskWithRelations = await prisma.task.findUnique({
