@@ -36,8 +36,8 @@ export const getTasks = async (req: Request, res: Response) => {
     attachments: task.attachments.map(att => ({
       ...att,
       fileURL: att.fileURL
-        ? `https://project-backend-m0qv.onrender.com${att.fileURL}`
-        : null,
+        ? `https://project-backend-m0qv.onrender.com${att.fileURL.startsWith("/") ? "" : "/"}${att.fileURL}`
+        : null
     })),
   }));
 
@@ -73,11 +73,14 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
     ...task,
     attachments: task.attachments.map(att => ({
       ...att,
+      // fileURL: att.fileURL
+      //   ? att.fileURL.startsWith("/")
+      //     ? att.fileURL
+      //     : `/uploads/tasks/${att.fileURL}`
+      //   : null,
       fileURL: att.fileURL
-        ? att.fileURL.startsWith("/")
-          ? att.fileURL
-          : `/uploads/tasks/${att.fileURL}`
-        : null,
+        ? `https://project-backend-m0qv.onrender.com${att.fileURL.startsWith("/") ? "" : "/"}${att.fileURL}`
+        : null
     })),
   }));
 
