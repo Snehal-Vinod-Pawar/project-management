@@ -20,14 +20,23 @@ export const getTasks = async (req: Request, res: Response) => {
     },
   });
 
+  // const normalized = tasks.map(task => ({
+  //   ...task,
+  //   attachments: task.attachments.map(att => ({
+  //     ...att,
+  //     fileURL: att.fileURL
+  //       ? att.fileURL.startsWith("/uploads")
+  //         ? att.fileURL
+  //         : `/uploads/tasks/${att.fileURL}`
+  //       : null,
+  //   })),
+  // }));
   const normalized = tasks.map(task => ({
     ...task,
     attachments: task.attachments.map(att => ({
       ...att,
       fileURL: att.fileURL
-        ? att.fileURL.startsWith("/uploads")
-          ? att.fileURL
-          : `/uploads/tasks/${att.fileURL}`
+        ? `https://project-backend-m0qv.onrender.com${att.fileURL}`
         : null,
     })),
   }));
@@ -38,6 +47,7 @@ export const getTasks = async (req: Request, res: Response) => {
 
 export const getTasksByPriority = async (req: Request, res: Response) => {
   const user = (req as any).user;
+
   const priority =
     typeof req.query.priority === "string"
       ? req.query.priority
@@ -134,7 +144,7 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
       projectId: Number(projectId),
       authorUserId: user.userId,
       ownerId: user.userId,
-      workspaceId: user.workspaceId || 1 ,
+      workspaceId: user.workspaceId || 1,
     };
 
     if (startDate) taskData.startDate = new Date(startDate);
