@@ -98,6 +98,9 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
 
 export const createTask = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("CREATE TASK BODY:", req.body);
+    console.log("CREATE TASK FILE:", (req as any).file);
+
     const user = (req as any).user;
 
     const {
