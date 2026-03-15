@@ -102,6 +102,10 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     console.log("CREATE TASK FILE:", (req as any).file);
 
     const user = (req as any).user;
+    if (!user) {
+      res.status(401).json({ message: "Unauthorized user" });
+      return;
+    }
 
     const {
       title,
@@ -130,7 +134,7 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
       projectId: Number(projectId),
       authorUserId: user.userId,
       ownerId: user.userId,
-      workspaceId: user.workspaceId,
+      workspaceId: user.workspaceId || 1 ,
     };
 
     if (startDate) taskData.startDate = new Date(startDate);
