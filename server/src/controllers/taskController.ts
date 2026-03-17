@@ -179,9 +179,35 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
 //   }
 // };
 
+// export const createTask = async (req: Request, res: Response) => {
+//   try {
+//     const user = (req as any).user;
+//     console.log("FILE RECEIVED:", (req as any).file);
+
+//     const newTask = await prisma.task.create({
+//       data: {
+//         title: req.body.title,
+//         description: req.body.description,
+//         status: req.body.status,
+//         priority: req.body.priority,
+//         projectId: Number(req.body.projectId),
+//         authorUserId: user.userId,
+//         ownerId: user.userId,
+//         workspaceId: user.workspaceId || 1,
+//       },
+//     });
+
+//     res.status(201).json(newTask);
+//   } catch (error: any) {
+//     console.error("ERROR:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 export const createTask = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
+
+    console.log("FILE RECEIVED:", (req as any).file); // DEBUG
 
     const newTask = await prisma.task.create({
       data: {
@@ -196,7 +222,34 @@ export const createTask = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(201).json(newTask);
+    // ✅ ADD THIS BLOCK (YOU REMOVED THIS EARLIER)
+    if ((req as any).file) {
+      const file = (req as any).file;
+
+      const imageUrl = `/uploads/tasks/${file.filename}`;
+
+      await prisma.attachment.create({
+        data: {
+          fileURL: imageUrl,
+          fileName: file.originalname,
+          taskId: newTask.id,
+          uploadedById: user.userId,
+        },
+      });
+    }
+
+    // ✅ RETURN TASK WITH ATTACHMENTS
+    const taskWithAttachments = await prisma.task.findUnique({
+      where: { id: newTask.id },
+      include: {
+        attachments: true,
+        author: true,
+        assignee: true,
+      },
+    });
+
+    res.status(201).json(taskWithAttachments);
+
   } catch (error: any) {
     console.error("ERROR:", error);
     res.status(500).json({ error: error.message });

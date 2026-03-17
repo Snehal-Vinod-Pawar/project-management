@@ -16,9 +16,8 @@
 
 import multer from "multer";
 import fs from "fs";
-import path from "path";
 
-const uploadPath = path.join(__dirname, "../../public/uploads/tasks");
+const uploadPath = "public/uploads/tasks";
 
 // ensure folder exists
 if (!fs.existsSync(uploadPath)) {
