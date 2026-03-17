@@ -20,24 +20,16 @@ export const getTasks = async (req: Request, res: Response) => {
     },
   });
 
-  // const normalized = tasks.map(task => ({
-  //   ...task,
-  //   attachments: task.attachments.map(att => ({
-  //     ...att,
-  //     fileURL: att.fileURL
-  //       ? att.fileURL.startsWith("/uploads")
-  //         ? att.fileURL
-  //         : `/uploads/tasks/${att.fileURL}`
-  //       : null,
-  //   })),
-  // }));
   const normalized = tasks.map(task => ({
     ...task,
     attachments: task.attachments.map(att => ({
       ...att,
       fileURL: att.fileURL
-        ? `https://project-backend-m0qv.onrender.com${att.fileURL.startsWith("/") ? "" : "/"}${att.fileURL}`
-        : null
+      // fileURL: att.fileURL
+      //   ? att.fileURL.startsWith("/uploads")
+      //     ? att.fileURL
+      //     : `/uploads/tasks/${att.fileURL}`
+      //   : null,
     })),
   }));
 
@@ -79,134 +71,135 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
       //     : `/uploads/tasks/${att.fileURL}`
       //   : null,
       fileURL: att.fileURL
-        ? `https://project-backend-m0qv.onrender.com${att.fileURL.startsWith("/") ? "" : "/"}${att.fileURL}`
-        : null
     })),
   }));
 
   res.json(normalizedTasks)
 
-
-  // if (!priority) {
-  //   return res.status(400).json({ message: "Priority is required" });
-  // }
-
-  // try {
-  //   const tasks = await prisma.task.findMany({
-  //     where: {
-  //       priority,                    // string, safe
-  //       workspaceId: user.workspaceId, // 🔒 only same workspace
-  //     },
-  //     include: {
-  //       author: true,
-  //       assignee: true,
-  //     },
-  //   });
-
-  //   res.json(tasks);
-  // } catch (error: any) {
-  //   res.status(500).json({ message: error.message });
-  // }
 };
 
-export const createTask = async (req: Request, res: Response): Promise<void> => {
+// export const createTask = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     console.log("CREATE TASK BODY:", req.body);
+//     console.log("CREATE TASK FILE:", (req as any).file);
+
+//     const user = (req as any).user;
+//     if (!user) {
+//       res.status(401).json({ message: "Unauthorized user" });
+//       return;
+//     }
+
+//     const {
+//       title,
+//       description,
+//       status,
+//       priority,
+//       tags,
+//       startDate,
+//       dueDate,
+//       points,
+//       projectId,
+//       assignedUserId,
+//     } = req.body;
+
+//     if (!projectId) {
+//       res.status(400).json({ message: "projectId is required" });
+//       return;
+//     }
+
+//     const taskData: any = {
+//       title,
+//       description,
+//       status,
+//       priority,
+//       tags,
+//       projectId: Number(projectId),
+//       authorUserId: user.userId,
+//       ownerId: user.userId,
+//       workspaceId: user.workspaceId || 1,
+//     };
+
+//     if (startDate) taskData.startDate = new Date(startDate);
+//     if (dueDate) taskData.dueDate = new Date(dueDate);
+//     if (points) taskData.points = Number(points);
+//     if (assignedUserId) taskData.assignedUserId = Number(assignedUserId);
+
+//     const newTask = await prisma.task.create({
+//       data: taskData,
+//     });
+
+//     // Save image
+//     try {
+//       if ((req as any).file) {
+//         const file = (req as any).file;
+
+//         const imageUrl = `/uploads/tasks/${file.filename}`;
+//         // const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
+
+//         await prisma.attachment.create({
+//           data: {
+//             fileURL: imageUrl,
+//             fileName: file.originalname,
+//             taskId: newTask.id,
+//             uploadedById: user.userId,
+//           },
+//         });
+//       }
+//     } catch (error) {
+//       console.error("ATTACHMENT ERROR:", error);
+//     }
+
+
+//     // 🔥 Fetch task again WITH attachments
+//     const taskWithRelations = await prisma.task.findUnique({
+//       where: { id: newTask.id },
+//       include: {
+//         attachments: true,
+//         author: true,
+//         assignee: true,
+//       },
+//     });
+
+//     // EMAIL WHEN TASK ASSIGNED
+//     if (taskWithRelations?.assignee?.email) {
+//       await sendEmail(
+//         taskWithRelations.assignee.email,
+//         "New Task Assigned",
+//         `<h3>You have a new task</h3>
+//      <p><b>${taskWithRelations.title}</b></p>
+//      <p>Status: ${taskWithRelations.status}</p>
+//      <p>Due: ${taskWithRelations.dueDate}</p>`
+//       );
+//     }
+
+//     res.status(201).json(taskWithRelations);
+//   } catch (error: any) {
+//     console.error("CREATE TASK ERROR:", error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+export const createTask = async (req: Request, res: Response) => {
   try {
-    console.log("CREATE TASK BODY:", req.body);
-    console.log("CREATE TASK FILE:", (req as any).file);
-
     const user = (req as any).user;
-    if (!user) {
-      res.status(401).json({ message: "Unauthorized user" });
-      return;
-    }
-
-    const {
-      title,
-      description,
-      status,
-      priority,
-      tags,
-      startDate,
-      dueDate,
-      points,
-      projectId,
-      assignedUserId,
-    } = req.body;
-
-    if (!projectId) {
-      res.status(400).json({ message: "projectId is required" });
-      return;
-    }
-
-    const taskData: any = {
-      title,
-      description,
-      status,
-      priority,
-      tags,
-      projectId: Number(projectId),
-      authorUserId: user.userId,
-      ownerId: user.userId,
-      workspaceId: user.workspaceId || 1,
-    };
-
-    if (startDate) taskData.startDate = new Date(startDate);
-    if (dueDate) taskData.dueDate = new Date(dueDate);
-    if (points) taskData.points = Number(points);
-    if (assignedUserId) taskData.assignedUserId = Number(assignedUserId);
 
     const newTask = await prisma.task.create({
-      data: taskData,
-    });
-
-    // Save image
-    try {
-      if ((req as any).file) {
-        const file = (req as any).file;
-
-        const imageUrl = `/uploads/tasks/${file.filename}`;
-        // const imageUrl= `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
-
-        await prisma.attachment.create({
-          data: {
-            fileURL: imageUrl,
-            fileName: file.originalname,
-            taskId: newTask.id,
-            uploadedById: user.userId,
-          },
-        });
-      }
-    } catch (error) {
-      console.error("ATTACHMENT ERROR:", error);
-    }
-
-
-    // 🔥 Fetch task again WITH attachments
-    const taskWithRelations = await prisma.task.findUnique({
-      where: { id: newTask.id },
-      include: {
-        attachments: true,
-        author: true,
-        assignee: true,
+      data: {
+        title: req.body.title,
+        description: req.body.description,
+        status: req.body.status,
+        priority: req.body.priority,
+        projectId: Number(req.body.projectId),
+        authorUserId: user.userId,
+        ownerId: user.userId,
+        workspaceId: user.workspaceId || 1,
       },
     });
 
-    // EMAIL WHEN TASK ASSIGNED
-    if (taskWithRelations?.assignee?.email) {
-      await sendEmail(
-        taskWithRelations.assignee.email,
-        "New Task Assigned",
-        `<h3>You have a new task</h3>
-     <p><b>${taskWithRelations.title}</b></p>
-     <p>Status: ${taskWithRelations.status}</p>
-     <p>Due: ${taskWithRelations.dueDate}</p>`
-      );
-    }
-
-    res.status(201).json(taskWithRelations);
+    res.status(201).json(newTask);
   } catch (error: any) {
-    console.error("CREATE TASK ERROR:", error);
-    res.status(500).json({ message: error.message });
+    console.error("ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
