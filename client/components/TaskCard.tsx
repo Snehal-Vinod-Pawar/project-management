@@ -52,16 +52,16 @@ const TaskCard = ({ task }: Props) => {
     >
       <div className="px-5 py-4 text-sm text-gray-700">
         {/* ATTACHMENT */}
-        {task.attachments?.[0]?.fileURL && (
+        {/* {task.attachments?.[0]?.fileURL && (
           <div className="mb-4 overflow-hidden rounded-md">
-            {/* <img
+            <img
               src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${task.attachments[0].fileURL}`}
               alt={task.attachments[0].fileName || "task image"}
               width={400}
               height={200}
               className="rounded-md object-cover"
             /> */}
-            <img
+        {/* <img
               src={
                 task.attachments[0].fileURL.startsWith("/uploads")
                   ? `http://localhost:8000${task.attachments[0].fileURL}` // backend upload
@@ -69,10 +69,26 @@ const TaskCard = ({ task }: Props) => {
               }
               alt="task"
               className="rounded-md object-cover max-h-52"
+            /> */}
+        {/* <img
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${task.attachments[0].fileURL}`}
+              alt="task"
+              className="rounded-md object-cover max-h-52"
+            /> */}
+        {/* <strong>Attachments:</strong>
+          </div>
+        )} */}
+        {task.attachments?.[0]?.fileURL && (
+          <div className="mb-4 overflow-hidden rounded-md">
+            <img
+              src={task.attachments[0].fileURL}
+              alt={task.attachments[0].fileName || "task image"}
+              className="rounded-md object-cover max-h-52"
             />
             <strong>Attachments:</strong>
           </div>
         )}
+
 
         {/* HEADER */}
         {/* <div className="mb-2 flex items-center justify-between">

@@ -179,30 +179,7 @@ export const getTasksByPriority = async (req: Request, res: Response) => {
 //   }
 // };
 
-// export const createTask = async (req: Request, res: Response) => {
-//   try {
-//     const user = (req as any).user;
-//     console.log("FILE RECEIVED:", (req as any).file);
 
-//     const newTask = await prisma.task.create({
-//       data: {
-//         title: req.body.title,
-//         description: req.body.description,
-//         status: req.body.status,
-//         priority: req.body.priority,
-//         projectId: Number(req.body.projectId),
-//         authorUserId: user.userId,
-//         ownerId: user.userId,
-//         workspaceId: user.workspaceId || 1,
-//       },
-//     });
-
-//     res.status(201).json(newTask);
-//   } catch (error: any) {
-//     console.error("ERROR:", error);
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 export const createTask = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
@@ -226,7 +203,9 @@ export const createTask = async (req: Request, res: Response) => {
     if ((req as any).file) {
       const file = (req as any).file;
 
-      const imageUrl = `/uploads/tasks/${file.filename}`;
+      // const imageUrl = `/uploads/tasks/${file.filename}`;
+      const base = process.env.BASE_URL;
+      const imageUrl = `${base}/uploads/tasks/${file.filename}`;
 
       await prisma.attachment.create({
         data: {
@@ -327,11 +306,15 @@ export const deleteTask = async (req: Request, res: Response) => {
     }
 
     // Safety: do NOT allow deleting task with attachments
-    if (task.attachments.length > 0) {
-      return res.status(400).json({
-        message: "Please delete attachments first before deleting this task.",
-      });
-    }
+    // if (task.attachments.length > 0) {
+    //   return res.status(400).json({
+    //     message: "Please delete attachments first before deleting this task.",
+    //   });
+    // }
+
+    await prisma.attachment.deleteMany({
+      where: { taskId: Number(taskId) },
+    });
 
     await prisma.task.delete({
       where: { id: Number(taskId) },

@@ -76,8 +76,8 @@ export interface Team {
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
-        // baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL, 
-        baseUrl: "https://project-backend-m0qv.onrender.com",
+        baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL, 
+        // baseUrl: "https://project-backend-m0qv.onrender.com",
         credentials: "include",
     }),
     reducerPath: "api",
@@ -121,6 +121,26 @@ export const api = createApi({
             }),
             invalidatesTags: ["Tasks"],
         }),
+        // createTask: build.mutation<any, FormData>({
+        //     queryFn: async (formData) => {
+        //         try {
+        //             const res = await fetch(
+        //                 "https://project-backend-m0qv.onrender.com/tasks",
+        //                 {
+        //                     method: "POST",
+        //                     body: formData, // ✅ raw FormData
+        //                     credentials: "include",
+        //                 }
+        //             );
+
+        //             const data = await res.json();
+        //             return { data };
+        //         } catch (error: any) {
+        //             return { error };
+        //         }
+        //     },
+        //     invalidatesTags: ["Tasks"],
+        // }),
         updateTaskStatus: build.mutation<Task, { taskId: number; status: string }>({
             query: ({ taskId, status }) => ({
                 url: `tasks/${taskId}/status`,

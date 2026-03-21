@@ -24,30 +24,65 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
   const [assignedUserId, setAssignedUserId] = useState("");
   const [projectId, setProjectId] = useState("");
   const [image, setImage] = useState<File | null>(null);
+
+  // const handleSubmit = async () => {
+  //   if (!isFormValid()) return;
+
+  //   const formattedStartDate = formatISO(new Date(startDate), {
+  //     representation: "complete",
+  //   });
+  //   const formattedDueDate = formatISO(new Date(dueDate), {
+  //     representation: "complete",
+  //   });
+
+  //   const formData = new FormData();
+  //   formData.append("title", title);
+  //   formData.append("description", description);
+  //   formData.append("status", status);
+  //   formData.append("priority", priority);
+  //   formData.append("tags", tags);
+  //   formData.append("startDate", formattedStartDate);
+  //   formData.append("dueDate", formattedDueDate);
+  //   formData.append("assignedUserId", assignedUserId);
+  //   formData.append("projectId", id !== null ? id : projectId);
+
+  //   if (image) {
+  //     formData.append("image", image);
+  //   }
+
+  // // 🔥 DEBUG
+  // for (let pair of formData.entries()) {
+  //   console.log(pair[0], pair[1]);
+  // }
+
+  //   try {
+  //     await createTask(formData).unwrap();
+  //     onClose();
+  //     window.location.reload();
+  //   } catch (err) {
+  //     console.error("Task creation failed", err);
+  //   }
+  // };
   
   const handleSubmit = async () => {
     if (!isFormValid()) return;
 
-    const formattedStartDate = formatISO(new Date(startDate), {
-      representation: "complete",
-    });
-    const formattedDueDate = formatISO(new Date(dueDate), {
-      representation: "complete",
-    });
-
     const formData = new FormData();
+
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("status", status);
-    formData.append("priority", priority);
+    formData.append("status", String(status));
+    formData.append("priority", String(priority));
     formData.append("tags", tags);
-    formData.append("startDate", formattedStartDate);
-    formData.append("dueDate", formattedDueDate);
-    formData.append("assignedUserId", assignedUserId);
-    formData.append("projectId", id !== null ? id : projectId);
+
+    formData.append("startDate", new Date(startDate).toISOString());
+    formData.append("dueDate", new Date(dueDate).toISOString());
+
+    formData.append("assignedUserId", String(assignedUserId));
+    formData.append("projectId", String(id ?? projectId));
 
     if (image) {
-      formData.append("image", image);
+      formData.append("image", image); // ✅ ONLY ONCE
     }
 
     try {
@@ -148,13 +183,13 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
-        <input
+        {/* <input
           type="text"
           className={inputStyles}
           placeholder="Author User ID"
           value={authorUserId}
           onChange={(e) => setAuthorUserId(e.target.value)}
-        />
+        /> */}
         <input
           type="text"
           className={inputStyles}
