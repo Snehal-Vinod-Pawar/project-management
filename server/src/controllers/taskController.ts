@@ -203,9 +203,9 @@ export const createTask = async (req: Request, res: Response) => {
     if ((req as any).file) {
       const file = (req as any).file;
 
-      // const imageUrl = `/uploads/tasks/${file.filename}`;
-      const base = process.env.BASE_URL?.replace(/\/$/, ""); // remove trailing slash
-      const imageUrl = `${base}/uploads/tasks/${file.filename}`;
+      const imageUrl = `/uploads/tasks/${file.filename}`;
+      // const base = process.env.BASE_URL?.replace(/\/$/, ""); // remove trailing slash
+      // const imageUrl = `${base}/uploads/tasks/${file.filename}`;
 
       await prisma.attachment.create({
         data: {
