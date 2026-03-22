@@ -183,13 +183,13 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
-        {/* <input
+        <input
           type="text"
           className={inputStyles}
           placeholder="Author User ID"
           value={authorUserId}
           onChange={(e) => setAuthorUserId(e.target.value)}
-        /> */}
+        />
         <input
           type="text"
           className={inputStyles}

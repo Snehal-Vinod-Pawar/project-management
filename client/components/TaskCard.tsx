@@ -80,11 +80,29 @@ const TaskCard = ({ task }: Props) => {
         )} */}
         {task.attachments?.[0]?.fileURL && (
           <div className="mb-4 overflow-hidden rounded-md">
-            <img
-              src={task.attachments[0].fileURL}
-              alt="task"
-              className="rounded-md object-cover max-h-52"
-            />
+            {(() => {
+              const path = task.attachments[0].fileURL;
+
+              // ✅ Case 1: already full URL (old data)
+              if (path.startsWith("http")) {
+                return (
+                  <img
+                    src={path}
+                    alt="task"
+                    className="rounded-md object-cover max-h-52"
+                  />
+                );
+              }
+
+              // ✅ Case 2: new data (/uploads/...)
+              return (
+                <img
+                  src={`https://project-backend-m0qv.onrender.com${path}`}
+                  alt="task"
+                  className="rounded-md object-cover max-h-52"
+                />
+              );
+            })()}
           </div>
         )}
 
