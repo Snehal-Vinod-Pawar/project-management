@@ -195,7 +195,7 @@ export const createTask = async (req: Request, res: Response) => {
         projectId: Number(req.body.projectId),
         authorUserId: user.userId,
         ownerId: user.userId,
-        workspaceId: user.workspaceId || 1,
+        workspaceId: user.workspaceId,
       },
     });
 
@@ -203,10 +203,8 @@ export const createTask = async (req: Request, res: Response) => {
     if ((req as any).file) {
       const file = (req as any).file;
 
-      // const imageUrl = `/uploads/tasks/${file.filename}`;
-      const imageUrl = `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
-      // const base = process.env.BASE_URL?.replace(/\/$/, ""); // remove trailing slash
-      // const imageUrl = `${base}/uploads/tasks/${file.filename}`;
+      const imageUrl = `/uploads/tasks/${file.filename}`;
+      // const imageUrl = `https://project-backend-m0qv.onrender.com/uploads/tasks/${file.filename}`;
 
       await prisma.attachment.create({
         data: {
