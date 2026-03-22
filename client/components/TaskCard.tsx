@@ -78,7 +78,7 @@ const TaskCard = ({ task }: Props) => {
         {/* <strong>Attachments:</strong>
           </div>
         )} */}
-        {task.attachments?.[0]?.fileURL && (
+        {/* {task.attachments?.[0]?.fileURL && (
           <div className="mb-4 overflow-hidden rounded-md">
             {(() => {
               const path = task.attachments[0].fileURL;
@@ -98,6 +98,34 @@ const TaskCard = ({ task }: Props) => {
               return (
                 <img
                   src={`https://project-backend-m0qv.onrender.com${path}`}
+                  alt="task"
+                  className="rounded-md object-cover max-h-52"
+                />
+              );
+            })()}
+          </div>
+        )} */}
+        {task.attachments?.[0]?.fileURL && (
+          <div className="mb-4 overflow-hidden rounded-md">
+            {(() => {
+              const path = task.attachments[0].fileURL;
+
+              // ❌ skip broken URLs
+              if (
+                path.includes("undefined") ||
+                path.includes("projectmanagement") ||
+                path.includes("onrender.comi")
+              ) {
+                return null;
+              }
+
+              const imageUrl = path.startsWith("http")
+                ? path
+                : `https://project-backend-m0qv.onrender.com${path}`;
+
+              return (
+                <img
+                  src={imageUrl}
                   alt="task"
                   className="rounded-md object-cover max-h-52"
                 />
