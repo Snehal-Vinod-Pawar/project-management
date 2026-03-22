@@ -81,7 +81,7 @@ const TaskCard = ({ task }: Props) => {
         {task.attachments?.[0]?.fileURL && (
           <div className="mb-4 overflow-hidden rounded-md">
             <img
-              src={`https://project-backend-m0qv.onrender.com${task.attachments[0].fileURL}`}
+              src={task.attachments[0].fileURL}
               alt="task"
               className="rounded-md object-cover max-h-52"
             />

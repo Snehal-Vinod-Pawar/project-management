@@ -76,8 +76,8 @@ export interface Team {
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL, 
-        // baseUrl: "https://project-backend-m0qv.onrender.com",
+        // baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL, 
+        baseUrl: "https://project-backend-m0qv.onrender.com",
         credentials: "include",
     }),
     reducerPath: "api",
