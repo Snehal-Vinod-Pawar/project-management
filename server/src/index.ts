@@ -75,7 +75,7 @@ app.use("/api", inviteRoutes);
 
 app.use(
   "/uploads",
-  express.static(path.join(__dirname, "../public/uploads"))
+  express.static(path.join(__dirname, "../../public/uploads"))
 );
 
 
