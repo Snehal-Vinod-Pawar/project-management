@@ -2,7 +2,7 @@
 
 A web application for teams to manage projects and tasks. Users can sign up with an email/password or via OAuth (Google/GitHub), create workspaces, form teams, run projects with task assignments, and search across their work.
 
-<img width="1876" height="906" alt="image" src="https://github.com/user-attachments/assets/7f7e2775-aae4-4ab5-95ec-79c721ce55c1" />
+![Uploading image.png…]()
 
 ## Key Features
 
