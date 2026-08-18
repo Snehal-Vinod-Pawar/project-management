@@ -3,6 +3,7 @@
 A web application for teams to manage projects and tasks. Users can sign up with an email/password or via OAuth (Google/GitHub), create workspaces, form teams, run projects with task assignments, and search across their work.
 
 <img width="1907" height="904" alt="Screenshot 2026-08-18 193801" src="https://github.com/user-attachments/assets/2298a99f-d289-41e8-9c01-82477ec3bbf5" />
+<img width="1903" height="898" alt="image" src="https://github.com/user-attachments/assets/0c857c81-26a1-40d6-88ec-558e1d878f7d" />
 
 ## Key Features
 
@@ -137,13 +138,5 @@ cd server
 npm run seed      # or: ts-node prisma/seed.ts
 ```
 
-## Screenshots / Demo
 
-<!-- Add screenshot: Register page -->
-
-<!-- Add screenshot: Login page -->
-
-<!-- Add screenshot: Dashboard -->
-
-<!-- Add screenshot: Project / Task view -->
 
