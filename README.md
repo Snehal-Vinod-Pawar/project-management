@@ -132,8 +132,6 @@ npm run dev
 
 Then open `http://localhost:3000/auth/register` to create your first account.
 
-### 5. (Optional) Seed the database
-
 ```bash
 cd server
 npm run seed      # or: ts-node prisma/seed.ts
@@ -149,12 +147,3 @@ npm run seed      # or: ts-node prisma/seed.ts
 
 <!-- Add screenshot: Project / Task view -->
 
-## Future Improvements
-
-- **Unify the API client** — the auth pages use raw `fetch` while `AuthContext` uses the `axios` instance in `lib/api.ts`. Consolidate around a single client and read the base URL from `NEXT_PUBLIC_API_BASE_URL` everywhere (the RTK-Query `baseUrl` in `state/api.ts` is currently hardcoded to a deployed origin).
-- **CI/CD & tests** — add a pipeline (`prisma generate` + `tsc` + lint) and test coverage for the auth controllers.
-
-## Notes
-
-- All auth state is stored in an HTTP-only cookie, so credentials must be sent (`include`) on every cross-origin request.
-- OAuth callback URLs are built from `BASE_URL`, so set `BASE_URL` to your deployed backend origin (e.g. `https://project-backend-m0qv.onrender.com`) when running behind a real domain.
