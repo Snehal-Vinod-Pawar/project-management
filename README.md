@@ -4,6 +4,8 @@ A web application for teams to manage projects and tasks. Users can sign up with
 
 <img width="1907" height="904" alt="Screenshot 2026-08-18 193801" src="https://github.com/user-attachments/assets/2298a99f-d289-41e8-9c01-82477ec3bbf5" />
 <img width="1907" height="899" alt="Screenshot 2026-08-18 215251" src="https://github.com/user-attachments/assets/6e373a65-4a35-4d3f-9ed3-7fafcb92930a" />
+<img width="1896" height="899" alt="image" src="https://github.com/user-attachments/assets/65cafcfd-84ab-40c9-9a97-9442f212bfbb" />
+
 
 ## Key Features
 
