@@ -142,5 +142,10 @@ cd server
 npm run seed      # or: ts-node prisma/seed.ts
 ```
 
+## Live Demo
+
+Frontend: https://project-management2-two.vercel.app
+
+Backend API: https://project-backend-m0qv.onrender.com
 
 
